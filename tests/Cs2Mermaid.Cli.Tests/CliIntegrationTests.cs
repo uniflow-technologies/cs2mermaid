@@ -8,9 +8,13 @@ public class CliIntegrationTests
 {
     private static string GetCliPath()
     {
-        // Find the CLI executable
+        // Find the CLI executable - detect configuration from test assembly location
         var basePath = AppDomain.CurrentDomain.BaseDirectory;
-        var cliPath = Path.Combine(basePath, "..", "..", "..", "..", "..", "src", "Cs2Mermaid.Cli", "bin", "Debug", "net8.0", "Cs2Mermaid.Cli.dll");
+        
+        // Determine build configuration (Debug or Release) from the test binary path
+        var configuration = basePath.Contains("Release") ? "Release" : "Debug";
+        
+        var cliPath = Path.Combine(basePath, "..", "..", "..", "..", "..", "src", "Cs2Mermaid.Cli", "bin", configuration, "net8.0", "Cs2Mermaid.Cli.dll");
         return Path.GetFullPath(cliPath);
     }
 
@@ -21,8 +25,10 @@ public class CliIntegrationTests
         var cliPath = GetCliPath();
         if (!File.Exists(cliPath))
         {
-            // Build the CLI first
-            var buildResult = await RunProcessAsync("dotnet", $"build {Path.Combine(Path.GetDirectoryName(cliPath)!, "..", "..", "..", "..", "..", "Cs2Mermaid.sln")} -c Debug");
+            // Build the CLI first using the detected configuration
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var configuration = basePath.Contains("Release") ? "Release" : "Debug";
+            var buildResult = await RunProcessAsync("dotnet", $"build {Path.Combine(Path.GetDirectoryName(cliPath)!, "..", "..", "..", "..", "..", "Cs2Mermaid.sln")} -c {configuration}");
             buildResult.ExitCode.Should().Be(0, "CLI should build successfully");
         }
 
