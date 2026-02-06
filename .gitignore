@@ -11,3 +11,5 @@ obj/
 *.lock.json
 /.vs/
 **/Properties/launchSettings.json
+coverage/
+TestResults/
