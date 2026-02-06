@@ -8,19 +8,32 @@
 
 ## Installation
 
-### Quick Start (NuGet.org)
+### Quick Start
+
+First, authenticate with GitHub Packages (one-time setup):
+
+```bash
+# Create a Personal Access Token (PAT) with read:packages scope at:
+# https://github.com/settings/tokens
+
+dotnet nuget add source https://nuget.pkg.github.com/uniflow-technologies/index.json \
+  --name github \
+  --username YOUR_GITHUB_USERNAME \
+  --password YOUR_GITHUB_PAT \
+  --store-password-in-clear-text
+```
+
+Then install the package:
 
 ```bash
 # Add build integration to auto-generate diagrams
-dotnet add package Cs2Mermaid.Build
+dotnet add package Cs2Mermaid.Build --source github
 
 # Or install the CLI tool
-dotnet tool install cs2mermaid --global
+dotnet tool install Cs2Mermaid.Tool --global --add-source https://nuget.pkg.github.com/uniflow-technologies/index.json
 ```
 
-### Alternative: GitHub Packages
-
-Packages are also available from GitHub Packages. See [Package Consumption Guide](docs/PACKAGE-CONSUMPTION.md) for setup instructions.
+For more information on authenticating with GitHub Packages, see [GitHub's NuGet package documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry).
 
 ## Usage
 
@@ -54,10 +67,15 @@ Customize via `Directory.Build.props` or your `.csproj`:
 
 ## Package Sources
 
-| Source | Package ID | Installation |
-|--------|-----------|--------------|
-| **NuGet.org** | `Cs2Mermaid.Build` | `dotnet add package Cs2Mermaid.Build` |
-| **GitHub Packages** | `Cs2Mermaid.Build` | See [guide](docs/PACKAGE-CONSUMPTION.md) |
+Packages are published to **GitHub Packages**:
+
+| Package | Description | Installation |
+|---------|-------------|--------------|
+| **Cs2Mermaid.Build** | Build-time integration package | `dotnet add package Cs2Mermaid.Build --source github` |
+| **Cs2Mermaid.Core** | Core library for workspace analysis | `dotnet add package Cs2Mermaid.Core --source github` |
+| **Cs2Mermaid.Tool** | CLI tool | `dotnet tool install Cs2Mermaid.Tool --global --add-source https://nuget.pkg.github.com/uniflow-technologies/index.json` |
+
+> **Note**: Requires GitHub authentication - see installation instructions above.
 
 
 

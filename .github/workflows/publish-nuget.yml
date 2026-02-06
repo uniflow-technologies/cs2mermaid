@@ -29,22 +29,17 @@ jobs:
     - name: Build
       run: dotnet build -c Release --no-restore
     
-    - name: Pack Cs2Mermaid.Build
-      run: dotnet pack src/Cs2Mermaid.Build/Cs2Mermaid.Build.csproj -c Release --no-build -o ./artifacts
+    - name: Test
+      run: dotnet test -c Release --no-build --verbosity normal
     
-    - name: Pack Cs2Mermaid.Core
-      run: dotnet pack src/Cs2Mermaid.Core/Cs2Mermaid.Core.csproj -c Release --no-build -o ./artifacts
-    
-    - name: Pack Cs2Mermaid.Cli (as tool)
-      run: dotnet pack src/Cs2Mermaid.Cli/Cs2Mermaid.Cli.csproj -c Release --no-build -o ./artifacts
+    - name: Pack
+      run: |
+        dotnet pack src/Cs2Mermaid.Build/Cs2Mermaid.Build.csproj -c Release --no-build -o ./artifacts
+        dotnet pack src/Cs2Mermaid.Core/Cs2Mermaid.Core.csproj -c Release --no-build -o ./artifacts
+        dotnet pack src/Cs2Mermaid.Cli/Cs2Mermaid.Cli.csproj -c Release --no-build -o ./artifacts
     
     - name: Push to GitHub Packages
       run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
-      
-    - name: Push to NuGet.org
-      if: secrets.NUGET_API_KEY != ''
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-      continue-on-error: true
       
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
